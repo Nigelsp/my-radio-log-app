@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 
 # Install dependencies including MUI icons
-RUN npm install && npm install @mui/icons-material
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .
