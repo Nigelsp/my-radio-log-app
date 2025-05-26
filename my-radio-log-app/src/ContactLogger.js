@@ -1,102 +1,83 @@
 // src/ContactLogger.js
 import React, { useState } from 'react';
-import BandEntry from './components/BandEntry';
-import ContactCard from './components/ContactCard';
+import BandEntry from './BandEntry';
+import ContactCard from './ContactCard';
 import {
-  Typography,
   Box,
+  Typography,
   Button,
+  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Card,
-  CardContent,
-  Grid,
 } from '@mui/material';
 
 function ContactLogger({ operatorInfo }) {
   const [contacts, setContacts] = useState([]);
-  const [finalSubmitDialogOpen, setFinalSubmitDialogOpen] = useState(false);
+  const [finalSubmitOpen, setFinalSubmitOpen] = useState(false);
 
-  const addContact = (newContact) => {
-    setContacts([...contacts, newContact]);
+  const handleAddContact = (contact) => {
+    setContacts((prev) => [...prev, contact]);
   };
 
-  const updateContact = (index, updatedContact) => {
-    const updated = [...contacts];
-    updated[index] = updatedContact;
-    setContacts(updated);
-  };
-
-  const deleteContact = (index) => {
-    const updated = [...contacts];
-    updated.splice(index, 1);
-    setContacts(updated);
+  const handleDeleteContact = (indexToDelete) => {
+    setContacts((prev) => prev.filter((_, i) => i !== indexToDelete));
   };
 
   const handleFinalSubmit = () => {
-    // This is where you'd send data to a server or generate a report
-    console.log('Final submit payload:', {
-      operator: operatorInfo,
+    // Placeholder for final submission logic
+    console.log('Final Submission:', {
+      operatorInfo,
       contacts,
     });
-    setFinalSubmitDialogOpen(false);
-    alert('Final submission recorded. Thank you!');
+    setFinalSubmitOpen(false);
   };
 
   return (
     <Box p={2}>
-      <Grid container justifyContent="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h5" gutterBottom>
-            Log a Contact
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="body2">
-            {operatorInfo.callsign} — {operatorInfo.name} — {operatorInfo.location}
-          </Typography>
-        </Grid>
-      </Grid>
+      <Typography variant="h5" gutterBottom>
+        Log a Contact
+      </Typography>
 
-      <BandEntry onSubmit={addContact} />
+      <BandEntry onAddContact={handleAddContact} />
 
-      {contacts.length > 0 && (
-        <>
-          <Typography variant="h6" sx={{ mt: 3 }}>
-            Contacts Entered
-          </Typography>
+      <Box mt={4}>
+        <Typography variant="h6">Logged Contacts</Typography>
+        <Grid container spacing={2}>
           {contacts.map((contact, index) => (
-            <ContactCard
-              key={index}
-              contact={contact}
-              onUpdate={(updated) => updateContact(index, updated)}
-              onDelete={() => deleteContact(index)}
-            />
+            <Grid item xs={12} md={6} key={index}>
+              <ContactCard
+                contact={contact}
+                onDelete={() => handleDeleteContact(index)}
+              />
+            </Grid>
           ))}
+        </Grid>
+      </Box>
 
-          <Box mt={2}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => setFinalSubmitDialogOpen(true)}
-            >
-              Final Submit
-            </Button>
-          </Box>
-        </>
-      )}
+      <Box mt={4}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setFinalSubmitOpen(true)}
+          disabled={contacts.length === 0}
+        >
+          Final Submit
+        </Button>
+      </Box>
 
-      <Dialog open={finalSubmitDialogOpen} onClose={() => setFinalSubmitDialogOpen(false)}>
+      <Dialog open={finalSubmitOpen} onClose={() => setFinalSubmitOpen(false)}>
         <DialogTitle>Confirm Final Submission</DialogTitle>
         <DialogContent>
-          Are you sure you want to submit your log? You will not be able to edit it afterward.
+          <Typography>
+            Are you sure you want to submit your log for final processing?
+          </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setFinalSubmitDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => setFinalSubmitOpen(false)}>Cancel</Button>
           <Button onClick={handleFinalSubmit} color="primary" variant="contained">
-            Confirm Submit
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>
