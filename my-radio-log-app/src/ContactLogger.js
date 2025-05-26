@@ -57,7 +57,7 @@ function ContactLogger({ operatorInfo }) {
           {contacts.map((contact, index) => (
             <Grid item xs={12} key={index}>
               <ContactCard
-                entry={contact}
+                contact={contact}
                 onDelete={() => handleDeleteContact(index)}
               />
             </Grid>
