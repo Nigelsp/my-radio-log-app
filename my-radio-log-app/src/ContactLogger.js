@@ -1,7 +1,7 @@
 // src/ContactLogger.js
 import React, { useState } from 'react';
-import BandEntry from './BandEntry';
-import ContactCard from './ContactCard';
+import BandEntry from './components/BandEntry';
+import ContactCard from './components/ContactCard';
 import {
   Typography,
   Box,
