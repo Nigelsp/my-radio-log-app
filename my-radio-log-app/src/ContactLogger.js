@@ -18,10 +18,13 @@ import {
   DialogActions,
   Button,
   Snackbar,
-  Alert
+  Alert,
+  Collapse
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 const bands = [
   '160m', '80m', '40m', '30m', '20m', '17m',
@@ -36,6 +39,7 @@ export default function ContactLogger() {
   const [entryToDelete, setEntryToDelete] = useState(null);
   const [lastDeleted, setLastDeleted] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [expandedComments, setExpandedComments] = useState({});
 
   const handleSubmit = (data) => {
     if (editingEntry !== null) {
@@ -72,6 +76,13 @@ export default function ContactLogger() {
     setSnackbarOpen(false);
   };
 
+  const toggleComment = (key) => {
+    setExpandedComments(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
   const groupedEntries = {};
   entries.forEach((entry, index) => {
     const key = `${entry.band}_${entry.contactType}`;
@@ -91,7 +102,7 @@ export default function ContactLogger() {
         Progress Tracker
       </Typography>
 
-      <Paper elevation={2} sx={{ maxHeight: 300, overflow: 'auto', mb: 4 }}>
+      <Paper elevation={2} sx={{ maxHeight: 400, overflow: 'auto', mb: 4 }}>
         <List dense>
           {bands.map((band) => {
             const enteredTypes = contactTypes.filter((type) =>
@@ -107,28 +118,44 @@ export default function ContactLogger() {
                 {enteredTypes.map((type) => {
                   const key = `${band}_${type}`;
                   const entry = groupedEntries[key];
+                  const showFull = expandedComments[key];
+
                   return (
-                    <ListItem key={key} sx={{ pl: 4 }}>
-                      <ListItemText
-                        primary={type}
-                        secondary="✅ Entered"
-                      />
-                      <Box>
-                        <IconButton
-                          edge="end"
-                          aria-label="edit"
-                          onClick={() => setEditingEntry(entry.index)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => confirmDelete(entry.index)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                    <ListItem key={key} alignItems="flex-start" sx={{ pl: 4, flexDirection: 'column', alignItems: 'stretch' }}>
+                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <ListItemText
+                          primary={`${type} ✅`}
+                          secondary={`Callsigns: ${entry.callsigns.join(', ')}`}
+                        />
+                        <Box>
+                          <IconButton onClick={() => setEditingEntry(entry.index)}>
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton onClick={() => confirmDelete(entry.index)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
                       </Box>
+
+                      {entry.comment && (
+                        <Box pl={2} mt={1}>
+                          <Typography variant="body2" color="text.secondary">
+                            <strong>Comment: </strong>
+                            {showFull
+                              ? entry.comment
+                              : `${entry.comment.slice(0, 40)}${entry.comment.length > 40 ? '...' : ''}`}
+                          </Typography>
+                          {entry.comment.length > 40 && (
+                            <Button
+                              size="small"
+                              onClick={() => toggleComment(key)}
+                              endIcon={showFull ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                            >
+                              {showFull ? 'Show Less' : 'Show More'}
+                            </Button>
+                          )}
+                        </Box>
+                      )}
                     </ListItem>
                   );
                 })}
@@ -139,7 +166,6 @@ export default function ContactLogger() {
         </List>
       </Paper>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog
         open={entryToDelete !== null}
         onClose={() => setEntryToDelete(null)}
@@ -147,18 +173,17 @@ export default function ContactLogger() {
         <DialogTitle>Delete Entry</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this entry? This action can be undone.
+            Are you sure you want to delete this entry? You can undo this action.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEntryToDelete(null)}>Cancel</Button>
-          <Button color="error" onClick={handleDeleteConfirmed}>
+          <Button onClick={handleDeleteConfirmed} color="error" variant="contained">
             Delete
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Undo Snackbar */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
