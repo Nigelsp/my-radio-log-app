@@ -12,13 +12,15 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function ContactCard({ entry, onDelete, onEdit }) {
+export default function ContactCard({ contact, onDelete, onEdit }) {
+  if (!contact) return null;
+
   return (
     <Card sx={{ mb: 2 }}>
       <CardContent>
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6">
-            {entry.band} – {entry.contactType}
+            {contact.band} – {contact.contactType}
           </Typography>
           <Box>
             <IconButton onClick={onEdit} size="small">
@@ -30,17 +32,17 @@ export default function ContactCard({ entry, onDelete, onEdit }) {
           </Box>
         </Box>
         <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', mt: 1, mb: 1 }}>
-          {entry.callsigns.map((cs, i) => (
+          {contact.callsigns.map((cs, i) => (
             <Chip key={i} label={cs} color="primary" />
           ))}
         </Stack>
-        {entry.comment && (
+        {contact.comment && (
           <Typography variant="body2" color="text.secondary">
-            {entry.comment}
+            {contact.comment}
           </Typography>
         )}
         <Typography variant="caption" color="text.secondary">
-          Logged: {new Date(entry.date).toLocaleString()}
+          Logged: {new Date(contact.date).toLocaleString()}
         </Typography>
       </CardContent>
     </Card>
