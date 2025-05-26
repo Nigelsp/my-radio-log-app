@@ -11,7 +11,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Stack,
 } from '@mui/material';
 
 function ContactLogger({ operatorInfo }) {
@@ -36,8 +35,9 @@ function ContactLogger({ operatorInfo }) {
   };
 
   return (
-    <Box p={2}>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
+    // Wrap everything in a maxWidth container centered on the page
+    <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5" gutterBottom>
           Log a Contact
         </Typography>
@@ -48,13 +48,16 @@ function ContactLogger({ operatorInfo }) {
 
       <BandEntry onAddContact={handleAddContact} />
 
+      {/* Make Logged Contacts section align with the form */}
       <Box mt={4}>
-        <Typography variant="h6">Logged Contacts</Typography>
+        <Typography variant="h6" gutterBottom>
+          Logged Contacts
+        </Typography>
         <Grid container spacing={2}>
           {contacts.map((contact, index) => (
-            <Grid item xs={12} md={6} key={index}>
+            <Grid item xs={12} key={index}>
               <ContactCard
-                contact={contact}
+                entry={contact}
                 onDelete={() => handleDeleteContact(index)}
               />
             </Grid>
@@ -62,7 +65,7 @@ function ContactLogger({ operatorInfo }) {
         </Grid>
       </Box>
 
-      <Box mt={4}>
+      <Box mt={4} display="flex" justifyContent="flex-end">
         <Button
           variant="contained"
           color="primary"
