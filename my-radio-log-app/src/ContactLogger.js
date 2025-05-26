@@ -11,6 +11,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Stack,
 } from '@mui/material';
 
 function ContactLogger({ operatorInfo }) {
@@ -36,9 +37,14 @@ function ContactLogger({ operatorInfo }) {
 
   return (
     <Box p={2}>
-      <Typography variant="h5" gutterBottom>
-        Log a Contact
-      </Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h5" gutterBottom>
+          Log a Contact
+        </Typography>
+        <Typography variant="body1" sx={{ whiteSpace: 'pre-line', textAlign: 'right' }}>
+          {operatorInfo.callsign} – {operatorInfo.name}, {operatorInfo.location}
+        </Typography>
+      </Box>
 
       <BandEntry onAddContact={handleAddContact} />
 
