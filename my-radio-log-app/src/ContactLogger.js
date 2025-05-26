@@ -16,9 +16,18 @@ import {
 function ContactLogger({ operatorInfo }) {
   const [contacts, setContacts] = useState([]);
   const [finalSubmitOpen, setFinalSubmitOpen] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+  const [deleteIndex, setDeleteIndex] = useState(null);
 
   const handleAddContact = (contact) => {
-    setContacts((prev) => [...prev, contact]);
+    if (editIndex !== null) {
+      setContacts((prev) =>
+        prev.map((c, i) => (i === editIndex ? contact : c))
+      );
+      setEditIndex(null);
+    } else {
+      setContacts((prev) => [...prev, contact]);
+    }
   };
 
   const handleDeleteContact = (indexToDelete) => {
@@ -35,7 +44,6 @@ function ContactLogger({ operatorInfo }) {
   };
 
   return (
-    // Wrap everything in a maxWidth container centered on the page
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5" gutterBottom>
@@ -46,9 +54,11 @@ function ContactLogger({ operatorInfo }) {
         </Typography>
       </Box>
 
-      <BandEntry onAddContact={handleAddContact} />
+      <BandEntry
+        onAddContact={handleAddContact}
+        initialData={editIndex !== null ? contacts[editIndex] : null}
+      />
 
-      {/* Make Logged Contacts section align with the form */}
       <Box mt={4}>
         <Typography variant="h6" gutterBottom>
           Logged Contacts
@@ -58,7 +68,8 @@ function ContactLogger({ operatorInfo }) {
             <Grid item xs={12} key={index}>
               <ContactCard
                 contact={contact}
-                onDelete={() => handleDeleteContact(index)}
+                onDelete={() => setDeleteIndex(index)}
+                onEdit={() => setEditIndex(index)}
               />
             </Grid>
           ))}
@@ -76,6 +87,7 @@ function ContactLogger({ operatorInfo }) {
         </Button>
       </Box>
 
+      {/* Final Submit Confirmation */}
       <Dialog open={finalSubmitOpen} onClose={() => setFinalSubmitOpen(false)}>
         <DialogTitle>Confirm Final Submission</DialogTitle>
         <DialogContent>
@@ -87,6 +99,29 @@ function ContactLogger({ operatorInfo }) {
           <Button onClick={() => setFinalSubmitOpen(false)}>Cancel</Button>
           <Button onClick={handleFinalSubmit} color="primary" variant="contained">
             Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteIndex !== null} onClose={() => setDeleteIndex(null)}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete this contact?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteIndex(null)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              handleDeleteContact(deleteIndex);
+              setDeleteIndex(null);
+            }}
+            color="error"
+            variant="contained"
+          >
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
