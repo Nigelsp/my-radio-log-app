@@ -14,11 +14,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions,
+  DialogActions
 } from '@mui/material';
 
 const bands = [
-  '160m', '80m', '40m', '30m', '20m', '17m', '15m', '12m', '10m', '6m', '2m', '70cm',
+  '160m', '80m', '40m', '30m', '20m', '17m', '15m', '12m', '10m', '6m', '2m', '70cm'
 ];
 
 const contactTypes = ['Worked', 'Tried', 'Heard'];
@@ -27,7 +27,7 @@ const callsignRegex = /^(?:[A-Z0-9]{1,3}\/)?[A-Z]{1,2}[0-9][A-Z0-9]{1,4}(?:\/[A-
 
 function validateCallsigns(input) {
   return input
-    .split(/[ ,]+/) // split by space or comma only
+    .split(/[ ,]+/) // split on spaces or commas only
     .map(cs => cs.trim())
     .filter(Boolean)
     .map(cs => ({
@@ -39,13 +39,17 @@ function validateCallsigns(input) {
 export default function BandEntry({ onAddContact, initialData }) {
   const [band, setBand] = useState(initialData?.band || '');
   const [contactType, setContactType] = useState(initialData?.contactType || '');
-  const [callsigns, setCallsigns] = useState(
-    initialData?.callsigns?.join(' ') || ''
-  );
+  const [callsigns, setCallsigns] = useState(initialData?.callsigns?.join(' ') || '');
   const [comment, setComment] = useState(initialData?.comment || '');
   const [invalidCallsigns, setInvalidCallsigns] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [validatedCalls, setValidatedCalls] = useState([]);
+
+  useEffect(() => {
+    if (!onAddContact) {
+      console.warn('⚠️ BandEntry missing onAddContact prop!');
+    }
+  }, [onAddContact]);
 
   useEffect(() => {
     setBand(initialData?.band || '');
@@ -76,9 +80,13 @@ export default function BandEntry({ onAddContact, initialData }) {
       date: new Date().toISOString(),
     };
 
-    onAddContact(data);
+    if (onAddContact) {
+      onAddContact(data);
+    } else {
+      console.error('No onAddContact prop passed to BandEntry!');
+    }
 
-    // Reset form
+    // Reset form state
     setBand('');
     setContactType('');
     setCallsigns('');
@@ -92,13 +100,14 @@ export default function BandEntry({ onAddContact, initialData }) {
     <Box
       sx={{
         maxWidth: 600,
+        width: '100%',
         mx: 'auto',
         p: 3,
         border: '1px solid #ddd',
         borderRadius: 2,
         boxShadow: 1,
         mb: 4,
-        backgroundColor: '#fafafa',
+        backgroundColor: '#fafafa'
       }}
     >
       <Typography variant="h6" gutterBottom>
@@ -142,7 +151,7 @@ export default function BandEntry({ onAddContact, initialData }) {
         error={invalidCallsigns.length > 0}
         helperText={
           invalidCallsigns.length > 0
-            ? `Invalid: ${invalidCallsigns.join(', ')}`
+            ? `Invalid callsigns: ${invalidCallsigns.join(', ')}`
             : 'Separate callsigns by spaces or commas'
         }
       />
