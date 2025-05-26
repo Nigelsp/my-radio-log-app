@@ -16,7 +16,6 @@ import {
   DialogContentText,
   DialogActions
 } from '@mui/material';
-//comment
 
 const bands = [
   '160m', '80m', '40m', '30m', '20m', '17m', '15m', '12m', '10m', '6m', '2m', '70cm'
@@ -28,7 +27,7 @@ const callsignRegex = /^(?:[A-Z0-9]{1,3}\/)?[A-Z]{1,2}[0-9][A-Z0-9]{1,4}(?:\/[A-
 
 function validateCallsigns(input) {
   return input
-    .split(/[ ,]+/) // Only split by space or comma, not newline
+    .split(/[ ,]+/)
     .map(cs => cs.trim())
     .filter(Boolean)
     .map(cs => ({
@@ -37,7 +36,7 @@ function validateCallsigns(input) {
     }));
 }
 
-export default function BandEntry({ onAddContact, initialData }) {
+export default function BandEntry({ onSubmit, initialData }) {
   const [band, setBand] = useState(initialData?.band || '');
   const [contactType, setContactType] = useState(initialData?.contactType || '');
   const [callsigns, setCallsigns] = useState(
@@ -65,7 +64,7 @@ export default function BandEntry({ onAddContact, initialData }) {
     if (invalids.length > 0) return;
 
     setValidatedCalls(validated.map(c => c.callsign));
-    setConfirmOpen(true); // Open confirmation dialog
+    setConfirmOpen(true);
   };
 
   const handleConfirmSubmit = () => {
@@ -77,9 +76,9 @@ export default function BandEntry({ onAddContact, initialData }) {
       date: new Date().toISOString()
     };
 
-    onAddContact(data);
+    onSubmit(data);
 
-    // Reset state
+    // Reset
     setBand('');
     setContactType('');
     setCallsigns('');
@@ -92,7 +91,11 @@ export default function BandEntry({ onAddContact, initialData }) {
   return (
     <Box
       sx={{
-        p: 3,
+        width: '100%',
+        maxWidth: 600,
+        mx: 'auto',
+        px: 2,
+        py: 3,
         border: '1px solid #ddd',
         borderRadius: 2,
         boxShadow: 1,
@@ -171,7 +174,6 @@ export default function BandEntry({ onAddContact, initialData }) {
         Submit
       </Button>
 
-      {/* Confirmation Dialog */}
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <DialogTitle>Confirm Submission</DialogTitle>
         <DialogContent>
