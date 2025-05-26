@@ -37,7 +37,7 @@ function validateCallsigns(input) {
     }));
 }
 
-export default function BandEntry({ onSubmit, initialData }) {
+export default function BandEntry({ onAddContact, initialData }) {
   const [band, setBand] = useState(initialData?.band || '');
   const [contactType, setContactType] = useState(initialData?.contactType || '');
   const [callsigns, setCallsigns] = useState(
@@ -77,7 +77,7 @@ export default function BandEntry({ onSubmit, initialData }) {
       date: new Date().toISOString()
     };
 
-    onSubmit(data);
+    onAddContact(data);
 
     // Reset state
     setBand('');
