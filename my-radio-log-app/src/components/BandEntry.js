@@ -15,14 +15,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  LinearProgress,
-  useMediaQuery
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 
 const bands = [
-  '160m', '80m', '40m', '30m', '20m', '17m',
-  '15m', '12m', '10m', '6m', '2m', '70cm'
+  '160m', '80m', '40m', '30m', '20m', '17m', '15m', '12m', '10m', '6m', '2m', '70cm',
 ];
 
 const contactTypes = ['Worked', 'Tried', 'Heard'];
@@ -31,7 +27,7 @@ const callsignRegex = /^(?:[A-Z0-9]{1,3}\/)?[A-Z]{1,2}[0-9][A-Z0-9]{1,4}(?:\/[A-
 
 function validateCallsigns(input) {
   return input
-    .split(/[ ,]+/)
+    .split(/[ ,]+/) // split by space or comma only
     .map(cs => cs.trim())
     .filter(Boolean)
     .map(cs => ({
@@ -40,23 +36,22 @@ function validateCallsigns(input) {
     }));
 }
 
-export default function BandEntry({ onSubmit, initialData = {} }) {
-  const [band, setBand] = useState(initialData.band || '');
-  const [contactType, setContactType] = useState(initialData.contactType || '');
-  const [callsigns, setCallsigns] = useState(initialData.callsigns?.join(' ') || '');
-  const [comment, setComment] = useState(initialData.comment || '');
+export default function BandEntry({ onAddContact, initialData }) {
+  const [band, setBand] = useState(initialData?.band || '');
+  const [contactType, setContactType] = useState(initialData?.contactType || '');
+  const [callsigns, setCallsigns] = useState(
+    initialData?.callsigns?.join(' ') || ''
+  );
+  const [comment, setComment] = useState(initialData?.comment || '');
   const [invalidCallsigns, setInvalidCallsigns] = useState([]);
-  const [validatedCalls, setValidatedCalls] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
-
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [validatedCalls, setValidatedCalls] = useState([]);
 
   useEffect(() => {
-    setBand(initialData.band || '');
-    setContactType(initialData.contactType || '');
-    setCallsigns(initialData.callsigns?.join(' ') || '');
-    setComment(initialData.comment || '');
+    setBand(initialData?.band || '');
+    setContactType(initialData?.contactType || '');
+    setCallsigns(initialData?.callsigns?.join(' ') || '');
+    setComment(initialData?.comment || '');
   }, [initialData]);
 
   const handlePreSubmit = () => {
@@ -78,15 +73,12 @@ export default function BandEntry({ onSubmit, initialData = {} }) {
       contactType,
       callsigns: validatedCalls,
       comment,
-      date: new Date().toISOString()
+      date: new Date().toISOString(),
     };
 
-    if (typeof onSubmit === 'function') {
-      onSubmit(data);
-    } else {
-      console.warn('BandEntry: onSubmit prop is not a function');
-    }
+    onAddContact(data);
 
+    // Reset form
     setBand('');
     setContactType('');
     setCallsigns('');
@@ -96,39 +88,26 @@ export default function BandEntry({ onSubmit, initialData = {} }) {
     setConfirmOpen(false);
   };
 
-  const progress =
-    ((band ? 1 : 0) + (contactType ? 1 : 0) + (callsigns.trim() ? 1 : 0)) / 3;
-
   return (
     <Box
       sx={{
+        maxWidth: 600,
+        mx: 'auto',
         p: 3,
         border: '1px solid #ddd',
         borderRadius: 2,
         boxShadow: 1,
         mb: 4,
         backgroundColor: '#fafafa',
-        maxWidth: 600,
-        mx: 'auto'
       }}
     >
       <Typography variant="h6" gutterBottom>
         Log a Contact
       </Typography>
 
-      <LinearProgress
-        variant="determinate"
-        value={progress * 100}
-        sx={{ mb: 2 }}
-      />
-
       <FormControl fullWidth margin="normal">
         <InputLabel>Band</InputLabel>
-        <Select
-          value={band}
-          label="Band"
-          onChange={(e) => setBand(e.target.value)}
-        >
+        <Select value={band} label="Band" onChange={(e) => setBand(e.target.value)}>
           {bands.map((b) => (
             <MenuItem key={b} value={b}>
               {b}
@@ -189,17 +168,16 @@ export default function BandEntry({ onSubmit, initialData = {} }) {
         color="primary"
         onClick={handlePreSubmit}
         sx={{ mt: 2 }}
-        disabled={!band || !contactType || !callsigns.trim()}
       >
         Submit
       </Button>
 
+      {/* Confirmation Dialog */}
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
         <DialogTitle>Confirm Submission</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you're done entering callsigns for{' '}
-            <strong>{band}</strong> <strong>{contactType}</strong>?
+            Are you sure you're done entering callsigns for <strong>{band}</strong> <strong>{contactType}</strong>?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
