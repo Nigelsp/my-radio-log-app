@@ -27,7 +27,7 @@ const callsignRegex = /^(?:[A-Z0-9]{1,3}\/)?[A-Z]{1,2}[0-9][A-Z0-9]{1,4}(?:\/[A-
 
 function validateCallsigns(input) {
   return input
-    .split(/[ ,]+/) // split on spaces or commas only
+    .split(/[ ,]+/)
     .map(cs => cs.trim())
     .filter(Boolean)
     .map(cs => ({
@@ -44,12 +44,6 @@ export default function BandEntry({ onAddContact, initialData }) {
   const [invalidCallsigns, setInvalidCallsigns] = useState([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [validatedCalls, setValidatedCalls] = useState([]);
-
-  useEffect(() => {
-    if (!onAddContact) {
-      console.warn('⚠️ BandEntry missing onAddContact prop!');
-    }
-  }, [onAddContact]);
 
   useEffect(() => {
     setBand(initialData?.band || '');
@@ -82,8 +76,6 @@ export default function BandEntry({ onAddContact, initialData }) {
 
     if (onAddContact) {
       onAddContact(data);
-    } else {
-      console.error('No onAddContact prop passed to BandEntry!');
     }
 
     // Reset form state
@@ -110,13 +102,17 @@ export default function BandEntry({ onAddContact, initialData }) {
         backgroundColor: '#fafafa'
       }}
     >
-      <Typography variant="h6" gutterBottom>
+      <Typography variant="h5" gutterBottom>
         Log a Contact
       </Typography>
 
-      <FormControl fullWidth margin="normal">
+      <FormControl fullWidth margin="normal" required>
         <InputLabel>Band</InputLabel>
-        <Select value={band} label="Band" onChange={(e) => setBand(e.target.value)}>
+        <Select
+          value={band}
+          label="Band"
+          onChange={(e) => setBand(e.target.value)}
+        >
           {bands.map((b) => (
             <MenuItem key={b} value={b}>
               {b}
@@ -125,7 +121,7 @@ export default function BandEntry({ onAddContact, initialData }) {
         </Select>
       </FormControl>
 
-      <FormControl fullWidth margin="normal">
+      <FormControl fullWidth margin="normal" required>
         <InputLabel>Contact Type</InputLabel>
         <Select
           value={contactType}
@@ -141,6 +137,7 @@ export default function BandEntry({ onAddContact, initialData }) {
       </FormControl>
 
       <TextField
+        required
         label="Callsigns (separated by space or comma)"
         multiline
         rows={3}
@@ -172,17 +169,23 @@ export default function BandEntry({ onAddContact, initialData }) {
         </Alert>
       )}
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handlePreSubmit}
-        sx={{ mt: 2 }}
-      >
-        Submit
-      </Button>
+      <Box display="flex" justifyContent="flex-end" mt={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handlePreSubmit}
+        >
+          Submit
+        </Button>
+      </Box>
 
       {/* Confirmation Dialog */}
-      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+      <Dialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>Confirm Submission</DialogTitle>
         <DialogContent>
           <DialogContentText>
