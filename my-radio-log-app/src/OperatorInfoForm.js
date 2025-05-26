@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 
 function OperatorInfoForm({ onSubmit }) {
+    console.log("OperatorInfoForm loaded. onSubmit is:", onSubmit); // Add this
   const [callsign, setCallsign] = useState('');
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
