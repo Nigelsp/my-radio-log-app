@@ -89,22 +89,8 @@ export default function BandEntry({ onAddContact, initialData }) {
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 600,
-        width: '100%',
-        mx: 'auto',
-        p: 3,
-        border: '1px solid #ddd',
-        borderRadius: 2,
-        boxShadow: 1,
-        mb: 4,
-        backgroundColor: '#fafafa'
-      }}
-    >
-      <Typography variant="h5" gutterBottom>
-        Log a Contact
-      </Typography>
+    <Box sx={{ width: '100%', p: 0, m: 0 }}>
+     
 
       <FormControl fullWidth margin="normal" required>
         <InputLabel>Band</InputLabel>
