@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import BandEntry from './components/BandEntry';
 import ContactCard from './components/ContactCard';
+import { db } from './components/firebase'; // adjust path if needed
+import { collection, addDoc } from 'firebase/firestore';
+
 import {
   Box,
   Typography,
@@ -33,14 +36,20 @@ function ContactLogger({ operatorInfo }) {
     setContacts((prev) => prev.filter((_, i) => i !== indexToDelete));
   };
 
-  const handleFinalSubmit = () => {
-    // Placeholder for final submission logic
-    console.log('Final Submission:', {
+  const handleFinalSubmit = async () => {
+  try {
+    await addDoc(collection(db, "logs"), {
       operatorInfo,
       contacts,
+      submittedAt: new Date().toISOString()
     });
     setFinalSubmitOpen(false);
-  };
+    // Optionally, show a success message or reset state here
+  } catch (error) {
+    console.error("Error saving log:", error);
+    // Optionally, show an error message to the user
+  }
+};
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
