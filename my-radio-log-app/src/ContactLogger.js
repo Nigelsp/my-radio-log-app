@@ -46,9 +46,9 @@ function ContactLogger({ operatorInfo }) {
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
       {/* Operator Info Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h5" gutterBottom>
+        {/* <Typography variant="h5" gutterBottom>
           Log a Contact
-        </Typography>
+        </Typography> */}
         <Typography variant="body1" sx={{ whiteSpace: 'pre-line', textAlign: 'right' }}>
           {operatorInfo.callsign} – {operatorInfo.name}, {operatorInfo.location}
         </Typography>
