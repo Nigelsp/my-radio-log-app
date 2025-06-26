@@ -1,4 +1,3 @@
-// src/ContactLogger.js
 import React, { useState } from 'react';
 import BandEntry from './components/BandEntry';
 import ContactCard from './components/ContactCard';
@@ -45,6 +44,7 @@ function ContactLogger({ operatorInfo }) {
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
+      {/* Operator Info Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
         <Typography variant="h5" gutterBottom>
           Log a Contact
@@ -54,37 +54,40 @@ function ContactLogger({ operatorInfo }) {
         </Typography>
       </Box>
 
-      <BandEntry
-        onAddContact={handleAddContact}
-        initialData={editIndex !== null ? contacts[editIndex] : null}
-      />
+      {/* Main Content Box */}
+      <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: 2, background: '#fafafa' }}>
+        <BandEntry
+          onAddContact={handleAddContact}
+          initialData={editIndex !== null ? contacts[editIndex] : null}
+        />
 
-      <Box mt={4}>
-        <Typography variant="h6" gutterBottom>
-          Logged Contacts
-        </Typography>
-        <Grid container spacing={2}>
-          {contacts.map((contact, index) => (
-            <Grid item xs={12} key={index}>
-              <ContactCard
-                contact={contact}
-                onDelete={() => setDeleteIndex(index)}
-                onEdit={() => setEditIndex(index)}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+        <Box mt={4}>
+          <Typography variant="h6" gutterBottom>
+            Logged Contacts
+          </Typography>
+          <Grid container spacing={2}>
+            {contacts.map((contact, index) => (
+              <Grid item xs={12} key={index}>
+                <ContactCard
+                  contact={contact}
+                  onDelete={() => setDeleteIndex(index)}
+                  onEdit={() => setEditIndex(index)}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
 
-      <Box mt={4} display="flex" justifyContent="flex-end">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setFinalSubmitOpen(true)}
-          disabled={contacts.length === 0}
-        >
-          Final Submit
-        </Button>
+        <Box mt={4} display="flex" justifyContent="flex-end">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setFinalSubmitOpen(true)}
+            disabled={contacts.length === 0}
+          >
+            Final Submit
+          </Button>
+        </Box>
       </Box>
 
       {/* Final Submit Confirmation */}
