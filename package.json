@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@mui/icons-material": "^7.1.0",
-    "firebase": "^11.9.1"
-  }
-}

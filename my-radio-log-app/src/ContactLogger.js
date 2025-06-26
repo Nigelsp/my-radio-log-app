@@ -20,6 +20,7 @@ function ContactLogger({ operatorInfo }) {
   const [finalSubmitOpen, setFinalSubmitOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [deleteIndex, setDeleteIndex] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleAddContact = (contact) => {
     if (editIndex !== null) {
@@ -44,13 +45,25 @@ function ContactLogger({ operatorInfo }) {
       submittedAt: new Date().toISOString()
     });
     setFinalSubmitOpen(false);
+    setSubmitted(true);
     // Optionally, show a success message or reset state here
   } catch (error) {
     console.error("Error saving log:", error);
     // Optionally, show an error message to the user
   }
 };
-
+ if (submitted) {
+    return (
+      <Box sx={{ maxWidth: 600, mx: 'auto', p: 4, textAlign: 'center' }}>
+        <Typography variant="h4" gutterBottom>
+          Submission Successful!
+        </Typography>
+        <Typography variant="body1">
+          Thank you for submitting your log.
+        </Typography>
+      </Box>
+    );
+  }
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
       {/* Operator Info Header */}
